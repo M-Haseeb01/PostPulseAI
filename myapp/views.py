@@ -55,7 +55,15 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", google_api_key="")
 import random
 
 def generate_ai_post():
-        ai_user = User.objects.get(email="ai@posthub.com")
+        # 👇 Try to get the AI user, or create it if missing
+        ai_user, created = User.objects.get_or_create(
+            email="ai@posthub.com",
+            defaults={
+                'name': 'PostBot',
+                'age': 0,
+                'password': 'not_used'
+            }
+        )
         prompt=ChatPromptTemplate.from_template("Write a short social media post about tech, nature or motivation. choose one topic any and write post direct no fluff explantion or anything")
         chain=prompt|llm;
         result=chain.invoke({})
